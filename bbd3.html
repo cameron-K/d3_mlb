@@ -1,0 +1,146 @@
+<html>
+<head>
+	<title></title>
+	<script type="text/javascript" src="d3.min.js"></script>
+
+	<style type="text/css">
+		h1{
+			text-align: center;
+		}
+		svg{
+			display: block;
+			background-color: #eeefff;
+			border:7px dashed red;
+			margin:70px auto;
+			color:white;
+		}
+	</style>
+	<script type="text/javascript">
+
+		var sals_by_year=new Array();
+		var sum=0;
+		var avg_sals=new Array();
+		
+
+		d3.json("player_salaries.json", function(error, root){
+			var tempObj={};
+			if (error) throw error;
+		  
+			for(player of root){
+
+				var year=parseInt(player.yearID);
+				//sals_by_year[year]=sum of salaries
+			  	if(!sals_by_year[year]){
+			  		// sals_by_year[year+'sum']=0;
+			  		// sals_by_year[year]=parseInt(player.salary);
+			  		// sals_by_year[year+'max1']=0;
+
+			  		sals_by_year[year]={
+			  			sum:parseInt(player.salary),
+			  			count:0,
+			  			max1:player,
+			  			max2:"",
+			  			max3:""
+			  		}
+			  	}
+			  	else{
+			  		// sals_by_year[year]+=parseInt(player.salary);
+			  		var max1=parseInt(sals_by_year[year].max1.salary);
+			  		if(max1<parseInt(player.salary)){
+			  			if(max1>max2){
+			  				if(max2>max3){
+			  					max
+			  				}
+			  			}
+			  		}
+			  		sals_by_year[year].sum+=parseInt(player.salary);
+
+			  	}
+			  	sals_by_year[year].count++;
+			  	
+
+
+			}
+			// console.log(sals_by_year)
+			for(year in sals_by_year){
+			  	if(sals_by_year[year].sum>5000){
+			  		// avg_sals[year]=sals_by_year[year]/sals_by_year[year+'sum'];
+			  		// tempObj[year]=sals_by_year[year]/sals_by_year[year+'sum']
+			  		tempObj={
+			  			year:year,
+			  			avg:Math.round(sals_by_year[year].sum/sals_by_year[year].count)
+
+			  		}
+			  		
+			  		avg_sals.push(tempObj);
+			  		tempObj={};
+			  	}
+		  	
+		  	// console.log(year);
+		  	
+			}
+			console.log(avg_sals);
+			var woo=d3.selectAll('.woo');
+			var svg=d3.select('svg');
+			var bar=svg.selectAll('g')
+			.data(avg_sals)
+			.enter()
+			.append('g')
+			.on('mouseover',function(d){
+				// d3.selectAll('.woo').attr('visibility','visible');
+				d3.select(this).attr('fill','purple').select('.woo').attr('visibility','visible');
+				console.log(this);
+			})
+			.on('mouseout',function(d){
+				// d3.selectAll('.woo').attr('visibility','visible');
+				d3.select(this).attr('fill','black').select('.woo').attr('visibility','hidden');
+				console.log(this);
+			})
+			.attr("transform", function(d, i) { return "translate(" + i * 35 + ",0)"; });
+
+			bar.append('rect')
+			.attr('height',function(d){return Math.round(d.avg/10000);})
+			.attr('width',30)
+			.attr('y',function(d){return 600-(Math.round(d.avg/10000));});
+
+			bar.append('text')
+			.attr('x',3)
+			.attr('y',595)
+			.attr('font-size','.7em')
+			.attr('fill','#fff')
+			.text(function(d){return d.year;});
+
+			bar.append('text')
+			.attr('x',3)
+			.attr('y',function(d){return 560-(Math.round(d.avg/10000));})
+			.attr('font-size','1.2em')
+			.attr('fill','red')
+			.attr('visibility','hidden')
+			.attr('class','woo')
+			.text(function(d){return '$'+d.avg});
+
+
+
+
+
+		  	
+
+		 //  	var g=d3.select('svg').selectAll('rect')
+			// .data(avg_sals)
+			// .enter()
+			// .append('rect')
+			// .attr('x',function(d,i){return (d.year-1984)*35;})
+			// .attr('y',function(d){return 600-(Math.round(d.avg/10000));})
+			// .attr('height',function(d){return Math.round(d.avg/10000);})
+			// .attr('width',30)
+			// .text(function(d){return d.year;});
+		});
+
+		
+	</script>
+</head>
+<body>
+	<h1>MLB Average Salary 1985-2014</h1>
+	<svg height='600' width='1200'></svg>
+</body>
+</html>
